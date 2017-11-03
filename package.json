@@ -1,0 +1,15 @@
+{
+  "name": "s3_object_version_compare",
+  "version": "0.1.0",
+  "main": "./main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^1.7.9",
+    "aws-sdk": "^2.141.0",
+    "jquery": "^3.2.1",
+    "json": "^9.0.6",
+    "q": "^1.5.1"
+  }
+}
