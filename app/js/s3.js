@@ -18,17 +18,19 @@ function getBucketsList() {
         if (err) {
             console.log("Error", err);
         } else {
-            deferred.resolve(data.Buckets)
+            deferred.resolve(data)
         }
     });
     return deferred.promise;
 }
 
-function getObjectsList(bucketName, maxItemsToReturn){
+function getObjectsList(bucketName, maxItemsToReturn, prefixKey){
     deferred = Q.defer();
+    prefixKey = prefixKey || '';
     var params = {
         Bucket: bucketName,
-        MaxKeys: maxItemsToReturn
+        MaxKeys: maxItemsToReturn,
+        Prefix: prefixKey
     };
     s3.listObjects(params,function(err, objects_data) {
         if (err)
