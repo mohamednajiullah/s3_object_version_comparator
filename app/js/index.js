@@ -2,45 +2,56 @@
 
 var displayBreadCrumbs = $('#current_folder');
 var displayList = $('#buckets');
-var AWS = require('aws-sdk');
 
+function onSelectingItem() {
+    var selectedOption = displayList.find('option:selected');
+    displayBreadCrumbs.text(selectedOption.text());
+    if(selectedOption.val() === 'bucket')
+        getObjectsList(selectedOption.text(), 1000).then(createListToDisplay).then(updateSelectList);
 
-// Load credentials and set region from JSON file
-AWS.config.loadFromPath('./config.json');
+}
 
-// Create S3 service object
-var s3 = new AWS.S3({apiVersion: '2006-03-01'});
+function initialize(){
+    displayBreadCrumbs.text("Buckets");
 
-displayBreadCrumbs.textContent = "Buckets";
+    getBucketsList().then(createListToDisplay).then(updateSelectList);
+    displayList.bind('change', onSelectingItem);
+}
 
-displayList.addEventListener('change', function () {
-    var selectedIndex = displayList.selectedIndex;
-    displayBreadCrumbs.textContent = displayList[selectedIndex].value;
-    getObjectsList(displayList[selectedIndex].value, 1000).then(function (objects_data) {
-        displayList.innerHTML = "";
-        objects_data.Contents.forEach(function (object) {
-           displayList.options.add(new Option(object.Key, object.Key))
-        })
+function updateSelectList(objectsData) {
+    displayList.empty();
+    var text = 'Updating List..';
+    var option = new Option(text, text);
+    displayList.append($(option));
+    displayList.empty();
+
+    displayList.innerHTML = "";
+    objectsData.forEach(function (object) {
+        option = new Option(object.name, object.type);
+        displayList.append($(option));
+    })
+}
+
+function createListToDisplay(objectsList){
+    var listToDisplay = [];
+    if(objectsList.Buckets !== undefined){
+        extractSingleProperty(objectsList.Buckets, 'Name').forEach(function(bucket){
+            listToDisplay.push({name: bucket, type: 'bucket'});
+        });
+    }
+    else{
+        extractSingleProperty(objectsList.Contents, 'Key').forEach(function(object){
+            listToDisplay.push({name: object, type: 'file'});
+        });
+    }
+    return listToDisplay;
+}
+
+function extractSingleProperty(arrayOfObjects, keyToExtract) {
+    var singlePropertyArray = arrayOfObjects.map(function (bucket) {
+        return bucket[keyToExtract]
     });
-});
-// console.log(displayBreadCrumbs);
+    return singlePropertyArray;
+}
 
-
-// var bucketList;
-getBucketsList().then(function (data) {
-    displayList.options.remove(0);
-    data.forEach(function (bucket) {
-        displayList.options.add(new Option(bucket.Name, bucket.Name));
-    });
-    return displayList;
-// }).then(function (list){
-//     list.addEventListener('change',function(){
-//         var selectedIndex = list.selectedIndex;
-//         displayBreadCrumbs.textContent = list[selectedIndex].value;
-//     });
-
-});
-
-// console.log(bucketList);
-
-
+initialize();
