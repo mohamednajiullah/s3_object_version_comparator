@@ -1,7 +1,7 @@
 'use strict';
 
-var displayBreadCrumbs = document.getElementById('current_folder');
-var displayList = document.getElementById('buckets');
+var displayBreadCrumbs = $('#current_folder');
+var displayList = $('#buckets');
 var AWS = require('aws-sdk');
 
 
