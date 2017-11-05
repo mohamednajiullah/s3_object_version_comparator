@@ -1,6 +1,9 @@
+#Folders To Exclude
 .idea/
-
-config.json
-
 node_modules/
+
+
+#AWS Environment Variables
+config.json
+.envrc
 

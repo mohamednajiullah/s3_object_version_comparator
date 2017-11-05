@@ -15,7 +15,14 @@ This app uses electron.js to compare the text differences in different versions 
 As a result you need [programmatic access](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) to use this.
  
 ### Using AWS Credentials 
-Please create a `config.json` file in the root level of this project directory with the following content to use this app using your credentials.
+This can be done in two ways
+1. Create a `config.json` file and add its path to s3.js as follows
+
+```
+AWS.config.loadFromPath('./config.json');
+```
+
+with the following content to use this app using your credentials.
 
 ```
 {
@@ -23,6 +30,15 @@ Please create a `config.json` file in the root level of this project directory w
   "secretAccessKey": "YOUR-SECRET-ACCESS_KEY",
   "region": "YOUR-REGION"
 }
+```
+
+2. Create a .envrc file in the root level with the following content
+
+```
+export AWS_ACCESS_KEY_ID="YOUR-ACCESS-KEY-ID"
+export AWS_SECRET_ACCESS_KEY="YOUR-SECRET-ACCESS_KEY"
+export AWS_DEFAULT_REGION="YOUR-REGION"
+
 ```
 
 ### Installing Dependencies
