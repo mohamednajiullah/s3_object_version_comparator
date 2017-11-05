@@ -1,7 +1,7 @@
 #Folders To Exclude
 .idea/
 node_modules/
-
+compare_files/
 
 #AWS Environment Variables
 config.json

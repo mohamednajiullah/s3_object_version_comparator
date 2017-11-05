@@ -1,47 +1,107 @@
 'use strict';
 
-var displayBreadCrumbs = $('#current_folder');
-var displayList = $('#buckets');
+var objectsLabel = $('#label_objects');
+var versionsLabel = $('#label_versions');
+var bucketsSelectList = $('#buckets_list');
+var objectsContainer = $('#list_objects');
+var versionsContainer = $('#list_versions');
+var objectsSelectList = $('#objects_list');
+var versionsSelectList = $('#versions_list');
+var versionsCompareButton = $('#button_compare');
+var selectedVersions = [], color = '';
 
-function onSelectingItem() {
-    var selectedOption = displayList.find('option:selected');
-    displayBreadCrumbs.text(selectedOption.text());
-    if(selectedOption.val() === 'bucket')
-        getObjectsList(selectedOption.text(), 1000).then(createListToDisplay).then(updateSelectList);
+
+function onSelectingBucket() {
+    var selectedBucket = bucketsSelectList.find('option:selected');
+    objectsLabel.text(selectedBucket.text());
+    if (selectedBucket.val() === 'bucket') {
+        // objectsContainer.show();
+        getObjectsList(selectedBucket.text(), 1000).then(createListToDisplay).then(updateObjectsSelectList);
+    }
+}
+
+function onSelectingObject() {
+    var selectedBucket = bucketsSelectList.find('option:selected');
+    var selectedObject = objectsSelectList.find('option:selected');
+    versionsLabel.text(selectedObject.text());
+    if (selectedObject.val() === 'file') {
+        // versionsContainer.show();
+        getObjectVersionsList(selectedBucket.text(), 1000, selectedObject.text()).then(createListToDisplay).then(updateVersionsSelectList);
+    }
+}
+
+
+function validateSelection() {
 
 }
 
-function initialize(){
-    displayBreadCrumbs.text("Buckets");
-
-    getBucketsList().then(createListToDisplay).then(updateSelectList);
-    displayList.bind('change', onSelectingItem);
+function initialize() {
+    // objectsContainer.hide();
+    // versionsContainer.hide();
+    getBucketsList().then(createListToDisplay).then(updateBucketSelectList);
+    bucketsSelectList.bind('change', onSelectingBucket);
+    objectsSelectList.bind('change', onSelectingObject);
+    versionsSelectList.bind('click', validateSelection)
+    versionsCompareButton.bind('click', onComparing)
 }
 
-function updateSelectList(objectsData) {
-    displayList.empty();
+function updateBucketSelectList(objectsData) {
+    bucketsSelectList.empty();
     var text = 'Updating List..';
     var option = new Option(text, text);
-    displayList.append($(option));
-    displayList.empty();
+    bucketsSelectList.append($(option));
+    bucketsSelectList.empty();
 
-    displayList.innerHTML = "";
+    bucketsSelectList.innerHTML = "";
     objectsData.forEach(function (object) {
         option = new Option(object.name, object.type);
-        displayList.append($(option));
+        bucketsSelectList.append($(option));
     })
 }
 
-function createListToDisplay(objectsList){
+function updateObjectsSelectList(objectsData) {
+    objectsSelectList.empty();
+    var text = 'Updating List..';
+    var option = new Option(text, text);
+    objectsSelectList.append($(option));
+    objectsSelectList.empty();
+
+    objectsSelectList.innerHTML = "";
+    objectsData.forEach(function (object) {
+        option = new Option(object.name, object.type);
+        objectsSelectList.append($(option));
+    })
+}
+
+function updateVersionsSelectList(objectsData) {
+    versionsSelectList.empty();
+    var text = 'Updating List..';
+    var option = new Option(text, text);
+    versionsSelectList.append($(option));
+    versionsSelectList.empty();
+
+    versionsSelectList.innerHTML = "";
+    objectsData.forEach(function (object) {
+        option = new Option(object.name, object.type);
+        versionsSelectList.append($(option));
+    })
+}
+
+function createListToDisplay(objectsList) {
     var listToDisplay = [];
-    if(objectsList.Buckets !== undefined){
-        extractSingleProperty(objectsList.Buckets, 'Name').forEach(function(bucket){
+    if (objectsList.Buckets !== undefined) {
+        extractSingleProperty(objectsList.Buckets, 'Name').forEach(function (bucket) {
             listToDisplay.push({name: bucket, type: 'bucket'});
         });
     }
-    else{
-        extractSingleProperty(objectsList.Contents, 'Key').forEach(function(object){
+    else if (objectsList.Contents !== undefined) {
+        extractSingleProperty(objectsList.Contents, 'Key').forEach(function (object) {
             listToDisplay.push({name: object, type: 'file'});
+        });
+    }
+    else {
+        extractSingleProperty(objectsList.Versions, 'VersionId').forEach(function (object) {
+            listToDisplay.push({name: object, type: 'versionId'});
         });
     }
     return listToDisplay;
@@ -52,6 +112,71 @@ function extractSingleProperty(arrayOfObjects, keyToExtract) {
         return bucket[keyToExtract]
     });
     return singlePropertyArray;
+}
+
+function onComparing() {
+    var selectedBucket = bucketsSelectList.find('option:selected');
+    var selectedObject = objectsSelectList.find('option:selected');
+
+    var versions = versionsSelectList.find('option:selected').map(function () {
+        return this.innerText
+    }).get().slice(0, 2);
+    var version0FileName = createFileVersionName(selectedObject.text()) + '0';
+    var version1FileName = createFileVersionName(selectedObject.text()) + '1';
+    var fileTextVersions = [];
+    getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[0], version0FileName).then(function () {
+        getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[1], version1FileName).then(function () {
+            setTimeout(function () {
+                fileTextVersions.push(fs.readFileSync(version0FileName, 'utf8'));
+                fileTextVersions.push(fs.readFileSync(version1FileName, 'utf8'));
+                console.log(fileTextVersions);
+
+                comparing(fileTextVersions);
+            }, 3000);
+        });
+    });
+
+    // fileRead(version0FileName).then(function(fileText){
+    //     console.log(fileText);
+    //     fileTextVersions.push(fileText);
+    // });
+    // fileRead(version1FileName).then(function(fileText){
+    //     console.log(fileText);
+    //     fileTextVersions.push(fileText);
+    // });
+    // console.log(fileTextVersions);
+    // comparing(fileTextVersions);
+}
+
+function comparing(fileTextVersions) {
+
+    var jsdiff = require('diff');
+
+    var diffs = jsdiff.diffLines(fileTextVersions[1], fileTextVersions[0]);
+
+
+    var display = document.getElementById('display'),
+        fragment = document.createDocumentFragment(), span = null;
+
+    diffs.forEach(function (part) {
+        // green for additions, red for deletions
+        // grey for common parts
+        color = part.added ? 'green' :
+            part.removed ? 'red' : 'grey';
+        span = document.createElement('span');
+        span.style.color = color;
+        span.appendChild(document
+            .createTextNode(part.value));
+        fragment.appendChild(span);
+        fragment.appendChild(document.createElement('br'));
+    });
+
+    display.appendChild(fragment);
+
+}
+
+function createFileVersionName(fileKey) {
+    return path.join(__dirname, '..', 'compare_files', new Date().getTime().toString() + fileKey.split('/').pop());
 }
 
 initialize();
