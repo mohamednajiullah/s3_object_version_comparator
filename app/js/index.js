@@ -130,22 +130,10 @@ function onComparing() {
     setTimeout(function () {
         fileTextVersions.push(fs.readFileSync(version0FileName, 'utf8'));
         fileTextVersions.push(fs.readFileSync(version1FileName, 'utf8'));
-        console.log(fileTextVersions);
 
         comparing(fileTextVersions);
     }, 5000);
 
-
-    // fileRead(version0FileName).then(function(fileText){
-    //     console.log(fileText);
-    //     fileTextVersions.push(fileText);
-    // });
-    // fileRead(version1FileName).then(function(fileText){
-    //     console.log(fileText);
-    //     fileTextVersions.push(fileText);
-    // });
-    // console.log(fileTextVersions);
-    // comparing(fileTextVersions);
 }
 
 function comparing(fileTextVersions) {
@@ -157,9 +145,8 @@ function comparing(fileTextVersions) {
 
     var display = document.getElementById('display'),
         fragment = document.createDocumentFragment(), span = null, p = null;
-
+    display.innerHTML='';
     diffs.forEach(function (part) {
-        console.log(part.value);
         // green for additions, red for deletions
         // grey for common parts
         color = part.added ? 'green' :
