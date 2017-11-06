@@ -5,21 +5,25 @@
 
 .row #list_buckets {
     display: inline-block;
-    width:33%;
+    width: 33%;
 }
 
 .row #list_objects {
     display: inline-block;
-    width:33%;
+    width: 33%;
 }
 
 .row #list_versions {
     display: inline-block;
-    width:33%;
+    width: 33%;
 }
 
 #button_compare {
     margin: 10px 0;
     text-align: center;
     border-bottom: 1px solid #000000;
+}
+
+.prettyprint {
+    border: 1px solid #888;
 }
