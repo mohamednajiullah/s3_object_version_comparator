@@ -129,7 +129,6 @@ function onComparing() {
             setTimeout(function () {
                 fileTextVersions.push(fs.readFileSync(version0FileName, 'utf8'));
                 fileTextVersions.push(fs.readFileSync(version1FileName, 'utf8'));
-                console.log(fileTextVersions);
 
                 comparing(fileTextVersions);
             }, 3000);
