@@ -1,25 +1,7 @@
 <html>
 <head>
     <title>S3 Object Version Comparator</title>
-    <style>
-        .row{
-            display: inline-block;
-            width: 100%;
-        }
-        #list_buckets {
-            display: inline-block;
-            float: left;
-        }
-
-        #list_objects {
-            display: inline-block;
-            float: right;
-        }
-
-        #list_versions {
-            display: inline-block;
-        }
-    </style>
+    <link href="css/screen.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="main_container">
@@ -27,31 +9,29 @@
         <div id="list_buckets">
             <label id="label_buckets" text="S3">Buckets</label>
             <br>
-            <select id="buckets_list" size="20" style="width:200px;">
+            <select id="buckets_list" size="20">
                 <option value="loading">Loading Bucket Names...</option>
             </select>
         </div>
         <div id="list_objects">
             <label id="label_objects" text="S3">Objects</label>
             <br>
-            <select id="objects_list" size="20" style="width:200px;">
+            <select id="objects_list" size="20">
                 <option value="loading">Loading Objects...</option>
             </select>
         </div>
-    </div>
-    <div class="row">
         <div id="list_versions">
             <label id="label_versions" text="S3">Versions</label>
             <br>
-            <select id="versions_list" size="20" style="width:300px;" multiple="multiple">
+            <select id="versions_list" size="20" multiple="multiple">
                 <option value="loading">Loading Versions...</option>
             </select>
         </div>
-        <div>
-            <input type="button" id="button_compare" value="Compare"/>
-        </div>
     </div>
-    <div class="row" id="display" style="width: 100%">
+    <div>
+        <input type="button" id="button_compare" value="Compare"/>
+    </div>
+    <div class="row" id="display">
 
     </div>
 </div>
