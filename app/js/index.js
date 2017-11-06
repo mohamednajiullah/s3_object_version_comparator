@@ -41,8 +41,8 @@ function initialize() {
     getBucketsList().then(createListToDisplay).then(updateBucketSelectList);
     bucketsSelectList.bind('change', onSelectingBucket);
     objectsSelectList.bind('change', onSelectingObject);
-    versionsSelectList.bind('click', validateSelection)
-    versionsCompareButton.bind('click', onComparing)
+    versionsSelectList.bind('click', validateSelection);
+    versionsCompareButton.bind('click', onComparing);
 }
 
 function updateBucketSelectList(objectsData) {
@@ -124,16 +124,17 @@ function onComparing() {
     var version0FileName = createFileVersionName(selectedObject.text()) + '0';
     var version1FileName = createFileVersionName(selectedObject.text()) + '1';
     var fileTextVersions = [];
-    getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[0], version0FileName).then(function () {
-        getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[1], version1FileName).then(function () {
-            setTimeout(function () {
-                fileTextVersions.push(fs.readFileSync(version0FileName, 'utf8'));
-                fileTextVersions.push(fs.readFileSync(version1FileName, 'utf8'));
 
-                comparing(fileTextVersions);
-            }, 3000);
-        });
-    });
+    getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[0], version0FileName);
+    getObjectByVersionId(selectedBucket.text(), selectedObject.text(), versions[1], version1FileName);
+    setTimeout(function () {
+        fileTextVersions.push(fs.readFileSync(version0FileName, 'utf8'));
+        fileTextVersions.push(fs.readFileSync(version1FileName, 'utf8'));
+        console.log(fileTextVersions);
+
+        comparing(fileTextVersions);
+    }, 5000);
+
 
     // fileRead(version0FileName).then(function(fileText){
     //     console.log(fileText);
@@ -151,22 +152,25 @@ function comparing(fileTextVersions) {
 
     var jsdiff = require('diff');
 
-    var diffs = jsdiff.diffLines(fileTextVersions[1], fileTextVersions[0]);
+    var diffs = jsdiff.diffLines(fileTextVersions[1], fileTextVersions[0], false , true);
 
 
     var display = document.getElementById('display'),
-        fragment = document.createDocumentFragment(), span = null;
+        fragment = document.createDocumentFragment(), span = null, p = null;
 
     diffs.forEach(function (part) {
+        console.log(part.value);
         // green for additions, red for deletions
         // grey for common parts
         color = part.added ? 'green' :
             part.removed ? 'red' : 'grey';
+        p = document.createElement('p');
         span = document.createElement('span');
         span.style.color = color;
         span.appendChild(document
             .createTextNode(part.value));
-        fragment.appendChild(span);
+        p.appendChild(span);
+        fragment.appendChild(p);
         fragment.appendChild(document.createElement('br'));
     });
 

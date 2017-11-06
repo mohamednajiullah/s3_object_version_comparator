@@ -56,19 +56,12 @@ function getObjectVersionsList(bucketName, maxItemsToReturn, prefixKey) {
 }
 
 function getObjectByVersionId(bucketName, key, versionId, fileNameToStore) {
-    deferred = Q.defer();
+    // deferred = Q.defer();
     var file = fs.createWriteStream(fileNameToStore);
     var params = {
         Bucket: bucketName,
         Key: key,
         VersionId: versionId
     };
-    s3.getObject(params, function(err, objectVersion){
-        if (err)
-            console.log(err, err.stack); // an error occurred
-        else
-            deferred.resolve(objectVersion)
-    }).createReadStream().pipe(file);
-    return deferred.promise;
-
+    s3.getObject(params).createReadStream().pipe(file);
 }
