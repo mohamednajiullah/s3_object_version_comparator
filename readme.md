@@ -1,6 +1,6 @@
 # S3 Object Version Comaparator
 
-**NOTE: This app is under development. It cannot be used yet**
+**NOTE: This app is under development. There are a few bugs that need to be fixed, but the app works now**
 
 S3 Object Version Comaparator allows you to compare different versions of the text files that you have in your S3 buckets. 
 
