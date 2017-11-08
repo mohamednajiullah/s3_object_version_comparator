@@ -8,7 +8,7 @@ var versionsContainer = $('#list_versions');
 var objectsSelectList = $('#objects_list');
 var versionsSelectList = $('#versions_list');
 var versionsCompareButton = $('#button_compare');
-var selectedVersions = [], color = '';
+var selectedVersions, color = '';
 
 
 function onSelectingBucket() {
@@ -31,13 +31,15 @@ function onSelectingObject() {
 }
 
 
-function validateSelection() {
+function validateSelection(e) {
+    selectedVersions = versionsSelectList.find('option:selected');
+    if(selectedVersions.length > 2){
+        selectedVersions.removeAttr('selected');
+    }
 
 }
 
 function initialize() {
-    // objectsContainer.hide();
-    // versionsContainer.hide();
     getBucketsList().then(createListToDisplay).then(updateBucketSelectList);
     bucketsSelectList.bind('change', onSelectingBucket);
     objectsSelectList.bind('change', onSelectingObject);
