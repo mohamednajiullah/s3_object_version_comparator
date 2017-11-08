@@ -103,7 +103,7 @@ function createListToDisplay(objectsList) {
     }
     else {
         extractSingleProperty(objectsList.Versions, 'VersionId').forEach(function (object) {
-            listToDisplay.push({name: object, type: 'versionId'});
+            listToDisplay.push({name: object, type: object});
         });
     }
     return listToDisplay;
@@ -142,12 +142,11 @@ function comparing(fileTextVersions) {
 
     var jsdiff = require('diff');
 
-    var diffs = jsdiff.diffLines(fileTextVersions[1], fileTextVersions[0], false , true);
+    var diffs = jsdiff.diffLines(fileTextVersions[1], fileTextVersions[0], false, true);
 
 
-    var display = document.getElementById('display'),
-        fragment = document.createDocumentFragment(), span = null, p = null;
-    display.innerHTML='';
+    var display = document.getElementById('display'), fragment = document.createDocumentFragment(), span = null, p = null;
+    display.innerHTML = '';
     diffs.forEach(function (part) {
         // green for additions, red for deletions
         // grey for common parts
