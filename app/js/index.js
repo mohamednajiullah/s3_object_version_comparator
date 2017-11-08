@@ -159,7 +159,6 @@ function comparing(fileTextVersions) {
             .createTextNode(part.value));
         p.appendChild(span);
         fragment.appendChild(p);
-        fragment.appendChild(document.createElement('br'));
     });
 
     display.appendChild(fragment);
