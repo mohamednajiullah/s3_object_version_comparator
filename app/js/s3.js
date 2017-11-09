@@ -29,7 +29,7 @@ function getObjectsList(bucketName, maxItemsToReturn, prefixKey) {
         MaxKeys: maxItemsToReturn,
         Prefix: prefixKey
     };
-    s3.listObjects(params, function (err, objectsData) {
+    s3.listObjectsV2(params, function (err, objectsData) {
         if (err)
             console.log(err, err.stack); // an error occurred
         else
