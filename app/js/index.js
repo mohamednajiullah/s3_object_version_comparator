@@ -150,13 +150,11 @@ function comparing(fileTextVersions) {
         // grey for common parts
         color = part.added ? 'green' :
             part.removed ? 'red' : 'grey';
-        p = document.createElement('p');
         span = document.createElement('span');
         span.style.color = color;
         span.appendChild(document
             .createTextNode(part.value));
-        p.appendChild(span);
-        fragment.appendChild(p);
+        fragment.appendChild(span);
     });
 
     display.appendChild(fragment);
