@@ -56,7 +56,6 @@ function getObjectVersionsList(bucketName, maxItemsToReturn, prefixKey) {
 }
 
 function getObjectByVersionId(bucketName, key, versionId, fileNameToStore) {
-    // deferred = Q.defer();
     var file = fs.createWriteStream(fileNameToStore);
     var params = {
         Bucket: bucketName,

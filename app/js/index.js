@@ -15,7 +15,6 @@ function onSelectingBucket() {
     var selectedBucket = bucketsSelectList.find('option:selected');
     objectsLabel.text(selectedBucket.text());
     if (selectedBucket.val() === 'bucket') {
-        // objectsContainer.show();
         getObjectsList(selectedBucket.text(), 1000).then(createListToDisplay).then(updateObjectsSelectList);
     }
 }
@@ -25,7 +24,6 @@ function onSelectingObject() {
     var selectedObject = objectsSelectList.find('option:selected');
     versionsLabel.text(selectedObject.text());
     if (selectedObject.val() === 'file') {
-        // versionsContainer.show();
         getObjectVersionsList(selectedBucket.text(), 1000, selectedObject.text()).then(createListToDisplay).then(updateVersionsSelectList);
     }
 }
@@ -33,7 +31,7 @@ function onSelectingObject() {
 
 function validateSelection(e) {
     selectedVersions = versionsSelectList.find('option:selected');
-    if(selectedVersions.length > 2){
+    if (selectedVersions.length > 2) {
         selectedVersions.removeAttr('selected');
     }
 
